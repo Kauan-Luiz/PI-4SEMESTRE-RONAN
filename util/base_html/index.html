@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geek Store - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+ </head>
+
+ <style>
+
+body {
+    background-image: linear-gradient(135deg, #fbff00, #ff0000a9, black), /* gradiente com transparência */
+    url('https://images6.alphacoders.com/129/thumb-1920-1290718.png');  background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    min-height: 112vh;
+}
+  
+ </style>
+ <body class="bg-light">
+  <header class="text-center my-4">
+    <img src="https://blog.geekgamerstore.com.br/wp-content/uploads/2020/12/geek.jpg" alt="Logo da FATEC" class="img-fluid" style="max-width: 200px;">
+  </header>
+
+  <main class="container bg-light p-4 rounded shadow" style="max-width: 400px;">
+    <h2 class="text-center mb-4">Login</h2>
+
+    <form action="dashboard.html" method="get">
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail:</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha:</label>
+        <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" required>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-danger">Entrar</button>
+        <a href="recuperar_senha.html" class="btn btn-link text-primary">Recuperar Senha</a>
+        <a href="cadastro_usuario.html" class="btn btn-primary">Cadastrar</a>
+      </div>
+    </form>
+  </main>
+
+ </body>
+</html>

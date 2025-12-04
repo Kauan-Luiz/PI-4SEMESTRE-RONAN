@@ -1,0 +1,10 @@
+# Ativa o motor de reescrita de URL
+RewriteEngine On
+
+# Impede que a regra abaixo afete arquivos reais
+RewriteCond %{REQUEST_FILENAME} !-f
+# Impede que a regra abaixo afete pastas reais
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redireciona TODAS as outras requisições para o index.php
+RewriteRule . index.php [L]
