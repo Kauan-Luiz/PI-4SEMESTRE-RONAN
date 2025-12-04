@@ -6,7 +6,7 @@ class UsuarioController {
 
     // --- LISTAR ---
     public function listar() {
-        if (!isset($_SESSION['usuario_id'])) { header('Location: login'); exit; }
+        if (!isset($_SESSION['usuario_id'])) { header('Location: /project/public/login'); exit; }
 
         $usuarios = Usuario::buscarTodos();
 
@@ -18,81 +18,75 @@ class UsuarioController {
 
     // --- TELA DE NOVO USUÁRIO ---
     public function inserir() {
-        if (!isset($_SESSION['usuario_id'])) { header('Location: login'); exit; }
+        if (!isset($_SESSION['usuario_id'])) { header('Location: /project/public/login'); exit; }
 
-        // AQUI ESTAVA O PROBLEMA: Faltava enviar 'acao' => 'salvar'
         render('usuarios/form_usuarios.php', [
             'title' => 'Novo Usuário', 
-            'acao' => 'salvar',  // <--- ESSA LINHA É OBRIGATÓRIA
+            'acao' => 'salvar', 
             'usuario' => []
         ]);
     }
 
     // --- TELA DE EDITAR ---
     public function editar() {
-        if (!isset($_SESSION['usuario_id'])) { header('Location: login'); exit; }
+        if (!isset($_SESSION['usuario_id'])) { header('Location: /project/public/login'); exit; }
         
         $id = $_GET['id'] ?? null;
-        if (!$id) { header('Location: ../usuarios'); exit; }
+        if (!$id) { header('Location: /project/public/usuarios'); exit; }
 
         $usuario = Usuario::buscarPorId($id);
         
-        // AQUI TAMBÉM: 'acao' => 'atualizar'
         render('usuarios/form_usuarios.php', [
             'title' => 'Editar Usuário', 
-            'acao' => 'atualizar', // <--- ESSA LINHA É OBRIGATÓRIA
+            'acao' => 'atualizar', 
             'usuario' => $usuario
         ]);
     }
 
     // --- SALVAR (INSERT) ---
     public function salvar() {
-        $dados = $_POST;
-        
-        // Criptografa senha
-        if (!empty($dados['senha'])) {
-            $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
-        }
+        // CORREÇÃO: Removemos o password_hash aqui pois o Model já faz isso.
+        // Se fizermos aqui também, a senha é criptografada duas vezes e o login falha.
+        $dados = $_POST; 
 
         Usuario::salvar($dados);
 
-        // Volta para a lista
+        // Lógica de Redirecionamento
         if (isset($_SESSION['usuario_id'])) {
-            header('Location: ../usuarios');
+            header('Location: /project/public/usuarios');
         } else {
-            header('Location: ../login');
+            header('Location: /project/public/login');
         }
         exit;
     }
 
     // --- ATUALIZAR (UPDATE) ---
     public function atualizar() {
-        if (!isset($_SESSION['usuario_id'])) { header('Location: login'); exit; }
+        if (!isset($_SESSION['usuario_id'])) { header('Location: /project/public/login'); exit; }
 
         $id = $_POST['id'];
         $dados = $_POST;
 
-        // Se a senha estiver vazia, remove do array para não sobrescrever
-        if (!empty($dados['senha'])) {
-            $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
-        } else {
+        // CORREÇÃO: Removemos o password_hash aqui também.
+        // Apenas removemos a senha do array se ela estiver vazia.
+        if (empty($dados['senha'])) {
             unset($dados['senha']); 
         }
 
         Usuario::atualizar($id, $dados);
         
-        header('Location: ../usuarios');
+        header('Location: /project/public/usuarios');
         exit;
     }
 
     // --- EXCLUIR ---
     public function excluir() {
-        if (!isset($_SESSION['usuario_id'])) { header('Location: login'); exit; }
+        if (!isset($_SESSION['usuario_id'])) { header('Location: /project/public/login'); exit; }
 
         if (isset($_GET['id'])) {
             Usuario::excluir($_GET['id']);
         }
-        header('Location: ../usuarios');
+        header('Location: /project/public/usuarios');
         exit;
     }
 
@@ -100,15 +94,22 @@ class UsuarioController {
     public function autenticar() {
         $email = $_POST['email'];
         $senha_digitada = $_POST['senha'];
+        
+        // Busca o usuário pelo e-mail
         $usuario = Usuario::buscarPorEmail($email);
 
+        // Verifica se usuário existe E se a senha bate
         if ($usuario && password_verify($senha_digitada, $usuario['senha'])) {
+            // Sucesso: Salva na sessão
             $_SESSION['usuario_id'] = $usuario['id_usuario'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
-            echo '<script>window.location.href = "pagina-inicial";</script>';
+            
+            // Redireciona para o Painel
+            header('Location: /project/public/pagina-inicial');
             exit;
         } else {
-            header('Location: login?erro=1');
+            // Falha: Volta para o login com erro
+            header('Location: /project/public/login?erro=1');
             exit;
         }
     }
@@ -116,7 +117,7 @@ class UsuarioController {
     // --- LOGOUT ---
     public function logout() {
         session_destroy();
-        header('Location: .');
+        header('Location: /project/public/');
         exit;
     }
 }

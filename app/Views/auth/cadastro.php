@@ -10,7 +10,7 @@
         h1 { text-align: center; color: #333; margin-top: 0; margin-bottom: 1.5rem; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
         .form-group { margin-bottom: 0; }
-        .full-width { grid-column: 1 / -1; } /* Faz o campo ocupar a largura total */
+        .full-width { grid-column: 1 / -1; }
         .form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-weight: 600; }
         .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         .btn { width: 100%; padding: 0.85rem; border: none; border-radius: 6px; background-color: #28a745; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1.5rem; }
@@ -22,7 +22,10 @@
 <body>
     <div class="container">
         <h1><?php echo $title; ?></h1>
-        <form action="cadastro" method="POST">
+        
+        <!-- CORREÇÃO: Caminho absoluto para a rota de salvar usuário -->
+        <!-- Isso garante que vá para o lugar certo independente da URL atual -->
+        <form action="/project/public/usuarios/salvar" method="POST">
             <div class="form-grid">
                 
                 <div class="form-group full-width">
@@ -104,7 +107,8 @@
             </div>
         </form>
         <div class="link-login">
-            <p>Já tem uma conta? <a href="login">Faça o login</a></p>
+            <!-- CORREÇÃO: Caminho absoluto para a tela de login -->
+            <p>Já tem uma conta? <a href="/project/public/login">Faça o login</a></p>
         </div>
     </div>
 </body>

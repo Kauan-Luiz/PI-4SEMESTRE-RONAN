@@ -33,8 +33,14 @@ function render_sem_template($view, $data = []) {
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $scriptName = $_SERVER['SCRIPT_NAME'];
 $basePath = dirname($scriptName);
+
+// Corrige barras invertidas no Windows
 if ($basePath === '/' || $basePath === '\\') { $basePath = ''; }
+
+// Remove a pasta base da URL para pegar a rota limpa
 $url = substr($url, strlen($basePath));
+
+// Garante que a URL comece com /
 if (empty($url)) { $url = '/'; }
 
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -48,7 +54,6 @@ if ($url == "/") {
     render_sem_template('home.php', ['title' => 'Bem-vindo ao TimeFlow']);
 }
 elseif ($url == "/pagina-inicial") {
-    // A proteção de sessão está dentro do arquivo pagina-inicial.php
     render_sem_template('pagina-inicial.php', ['title' => 'Painel do Sistema']);
 }
 
@@ -71,22 +76,26 @@ elseif ($url == "/cadastro" && $metodo == "POST") {
     $usuarioCtrl->salvar();
 }
 
-// 4. CRUD de Usuários (Protegido no Controller)
+// 4. CRUD de Usuários
 elseif ($url == "/usuarios") {
     $usuarioCtrl->listar();
 }
 elseif ($url == "/usuarios/inserir") {
-    // Reutiliza o formulário de cadastro, mas dentro do painel
-    render('usuarios/form_usuarios.php', ['title' => 'Novo Usuário']);
+    // CORREÇÃO: Chama o Controller (que define as variáveis) em vez de renderizar direto
+    $usuarioCtrl->inserir();
+}
+elseif ($url == "/usuarios/salvar" && $metodo == "POST") {
+    // NOVA ROTA ADICIONADA: Processa o cadastro vindo do painel
+    $usuarioCtrl->salvar();
 }
 elseif ($url == "/usuarios/editar") {
-    $usuarioCtrl->editar(); // Precisa passar ?id=X na URL
+    $usuarioCtrl->editar(); 
 }
 elseif ($url == "/usuarios/atualizar" && $metodo == "POST") {
     $usuarioCtrl->atualizar();
 }
 elseif ($url == "/usuarios/excluir") {
-    $usuarioCtrl->excluir(); // Precisa passar ?id=X na URL
+    $usuarioCtrl->excluir();
 }
 
 // 5. CRUD de Produtos
@@ -112,6 +121,10 @@ elseif ($url == "/produtos/excluir") {
 // 6. Erro 404
 else {
     http_response_code(404);
-    echo "<h1>404 - Página não encontrada</h1>";
-    echo "A URL acessada ($url) não existe.";
+    echo "<div style='font-family: sans-serif; text-align: center; padding: 50px;'>";
+    echo "<h1 style='color: #d9534f;'>Erro 404</h1>";
+    echo "<p>Página não encontrada.</p>";
+    echo "<p>A URL acessada foi: <strong>$url</strong></p>";
+    echo "<a href='pagina-inicial'>Voltar ao Início</a>";
+    echo "</div>";
 }
